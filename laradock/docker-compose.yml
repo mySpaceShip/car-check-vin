@@ -1,0 +1,17 @@
+version: '3'
+
+networks:
+  frontend:
+    external:
+      name: ananas-erp
+
+services:
+  frontend:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    volumes:
+      - "..:/workspace"
+    networks:
+    - frontend
+
