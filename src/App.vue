@@ -8,21 +8,22 @@
             <!--</div>-->
 
 
-
         <!--<alive-check></alive-check>-->
         <!--<filter-of-proxies></filter-of-proxies>-->
     </div>
 </template>
 
 <script>
-import CreateReportForm from './components/Autocode/CreateReportForm'
-import LeftSidebar from './components/Autocode/LeftSidebar'
-import ReportTable from './components/Autocode/ReportTable'
-import Authentication from './components/Autocode/Authentication'
+import CreateReportForm from './components/Autocode/CreateReportForm.vue';
+import LeftSidebar from './components/Autocode/LeftSidebar.vue';
+import ReportTable from './components/Autocode/ReportTable.vue';
+import Authentication from './components/Autocode/Authentication.vue';
 
 
 export default {
-  components: {Authentication, ReportTable, LeftSidebar, CreateReportForm},
+  components: {
+    Authentication, ReportTable, LeftSidebar, CreateReportForm,
+  },
 
 };
 </script>

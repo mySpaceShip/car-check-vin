@@ -25,33 +25,32 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
-  export default {
-    name: 'Authentication',
-    data() {
-      return {
-        user: '',
-        password: '',
-        errors: '',
+import { mapMutations } from 'vuex';
+
+export default {
+  name: 'Authentication',
+  data() {
+    return {
+      user: '',
+      password: '',
+      errors: '',
+    };
+  },
+  methods: {
+    ...mapMutations(['loginUser']),
+
+    logUser() {
+      this.errors = '';
+      const user = this.$store.getters.getUser;
+      if (user.name !== this.user || user.password !== this.password) {
+        this.errors = 'Вы ввели неправильное имя пользователя или пароль';
+        return;
       }
+      this.loginUser(true);
+      this.$router.push('/');
     },
-    methods: {
-      ...mapMutations(['loginUser']),
-
-      logUser() {
-        this.errors = ''
-        let user = this.$store.getters.getUser
-        if (user.name !== this.user || user.password !== this.password) {
-          this.errors = 'Вы ввели неправильное имя пользователя или пароль'
-          return
-        }
-        this.loginUser(true)
-        this.$router.push('/')
-
-
-      }
-    }
-  }
+  },
+};
 </script>
 
 <style lang="scss" scoped>

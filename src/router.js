@@ -1,8 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import authentication from '@/components/Autocode/Authentication'
-import report from '@/components/Autocode/Report'
-Vue.use(Router)
+import Vue from 'vue';
+import Router from 'vue-router';
+import authentication from '@/components/Autocode/Authentication.vue';
+import report from '@/components/Autocode/Report.vue';
+
+Vue.use(Router);
 export default new Router({
   mode: 'history',
   routes: [
@@ -10,19 +11,17 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: authentication,
-      meta: {login: true}
+      meta: { login: true },
     },
     {
       path: '/',
       name: 'report',
       component: report,
-      meta: {requiresLogin: true}
+      meta: { requiresLogin: true },
 
     },
 
   ],
 
-})
-
-
+});
 
