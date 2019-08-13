@@ -7,13 +7,13 @@
 </template>
 
 <script>
-  import LeftSidebar from './LeftSidebar'
-  import ReportView from './ReportView'
+import LeftSidebar from './LeftSidebar.vue';
+import ReportView from './ReportView.vue';
 
-  export default {
-    name: 'Report',
-    components: {ReportView, LeftSidebar}
-  }
+export default {
+  name: 'Report',
+  components: { ReportView, LeftSidebar },
+};
 </script>
 
 <style lang="scss" scoped>

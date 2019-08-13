@@ -6,7 +6,7 @@
         <label class="report-form__title" for="">Идентификатор</label>
         <input class="report-form__action" v-model="matchType" :placeholder="placeholderType"/>
         <div v-if="errors">
-          <div v-for="error in errors">
+          <div v-for="(error, index) in errors" :key="index">
             <div class="report-form__error">{{error}}</div>
           </div>
         </div>
@@ -19,7 +19,9 @@
           <option>body</option>
         </select>
       </div>
-      <button @click="createReport(matchType)" class="btn"><span class="btn__text">Создать</span></button>
+      <button @click="createReport(matchType)" class="btn">
+        <span class="btn__text">Создать</span>
+      </button>
     </div>
 
   </div>
@@ -27,127 +29,122 @@
 </template>
 
 <script>
-  import {mapMutations} from 'vuex'
+import { mapMutations } from 'vuex';
 
-  export default {
-    name: 'CreateReportForm',
-    data() {
-      return {
-        type: 'грз',
-        errors: [],
-        progress: ['error', 'progress', 'done'],
-        matchType: ''
+export default {
+  name: 'CreateReportForm',
+  data() {
+    return {
+      type: 'грз',
+      errors: [],
+      progress: ['error', 'progress', 'done'],
+      matchType: '',
+    };
+  },
+  computed: {
+    placeholderType() {
+      let res = '';
+      if (this.type === 'vin') {
+        res = '4F2YU08102KM26251';
       }
+      if (this.type === 'body') {
+        res = 'XYZ12-3456789';
+      }
+      if (this.type === 'грз') {
+        res = 'X362AX196';
+      }
+      return res;
     },
-    computed: {
-      placeholderType() {
-        let res = ''
-        if (this.type === 'vin') {
-          res = '4F2YU08102KM26251'
-        }
-        if (this.type === 'body') {
-          res = 'XYZ12-3456789'
-        }
-        if (this.type === 'грз') {
-          res = 'X362AX196'
-        }
-        return res
+  },
+  methods: {
+    ...mapMutations(['addReport']),
+
+    createReport() {
+      this.errors = [];
+      const random = Math.random() * ((this.progress.length - 1) + 1);
+      const report = {
+        id: this.matchType,
+        typeId: this.type,
+        date: new Date(),
+        progress: this.progress[Math.floor(random)],
+      };
+      if (!this.matchType) {
+        this.errors.push('Поле "индентификатор" пустое');
+        return;
       }
+      if (!this.isValidType(this.matchType)) {
+        this.errors.push('  Неверный тип идентификатора');
+        return;
+      }
+      this.addReport(report);
     },
-    methods: {
-      ...mapMutations(['addReport']),
 
-      createReport() {
-        this.errors = []
-        let random = Math.random() * ((this.progress.length - 1) + 1)
-        const report = {
-          id: this.matchType,
-          typeId: this.type,
-          date: new Date(),
-          progress: this.progress[Math.floor(random)]
-        }
-        if (!this.matchType) {
-          this.errors.push('Поле "индентификатор" пустое')
-          return
-        }
-        if (!this.isValidType(this.matchType)) {
-          this.errors.push('  Неверный тип идентификатора')
-          return
-        }
-        this.addReport(report)
-      },
-
-      isValidType(type) {
-        if (this.type === 'грз') {
-          return this.isValidGrz(type)
-
-        }
-        if (this.type === 'vin') {
-          return this.isValidVin(type)
-        }
-      },
-
-      isValidVin(vin) {
-        if (!vin.match('^([0-9a-hj-npr-zA-HJ-NPR-Z]{10,17})+$')) {
-          return false
-        }
-        let letters = [{k: 'A', v: 1}, {k: 'B', v: 2}, {k: 'C', v: 3},
-          {k: 'D', v: 4}, {k: 'E', v: 5}, {k: 'F', v: 6}, {k: 'G', v: 7},
-          {k: 'H', v: 8}, {k: 'J', v: 1}, {k: 'K', v: 2}, {k: 'L', v: 3},
-          {k: 'M', v: 4}, {k: 'N', v: 5}, {k: 'P', v: 7}, {k: 'R', v: 9},
-          {k: 'S', v: 2}, {k: 'T', v: 3}, {k: 'U', v: 4}, {k: 'V', v: 5},
-          {k: 'W', v: 6}, {k: 'X', v: 7}, {k: 'Y', v: 8}, {k: 'Z', v: 9}]
-        let weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2]
-        let exclude = ['I', 'O', 'Q']
-        let val = 0
-        for (let idx = 0; idx < vin.length; idx++) {
-          let item = vin.charAt(idx).toUpperCase()
-          if (exclude.find(x => {
-            return x === item
-          })) {
-            return false
-          }
-          let pos = (item.match('^[0-9]+$') != null) ? parseInt(item) : letters.filter(function (letter) {
-            return letter.k == item
-          })[0].v
-          val += (pos * weights[idx])
-        }
-        let checksum = (val % 11)
-        return (vin.charAt(8) == (checksum < 10 ? checksum.toString() : 'X'))
-      },
-
-      isValidGrz(type) {
-        let res = true
-        if (type.length < 8 || type.length > 9) {
-          res = false
-        }
-        let letters = ['А', 'В', 'Е', 'К', 'М', 'Н', 'О', 'Р', 'С', 'Т', 'У', 'Х']
-        let regNumber = /\d/
-        for (let i = 0; i < type.length; i++) {
-          let item = type.charAt(i).toUpperCase()
-          if (i == 0 | i == 4 | i == 5) {
-            let res = letters.filter(letter => {
-              return letter === item
-            })
-            if (!res.length) {
-              res = false
-            }
-          }
-          if (i > 0 && i < 4 && i > 5 && i < 9) {
-            if (!item.match(regNumber)) {
-              res = false
-            }
-          }
-          if (i > 5 && i < 9) {
-            if (!item.match(regNumber)) {
-              res = false
-            }
-          }
-        }
-        return res
+    isValidType(type) {
+      let res = false;
+      if (this.type === 'грз') {
+        res = this.isValidGrz(type);
       }
-    }
-  }
+      if (this.type === 'vin') {
+        res = this.isValidVin(type);
+      }
+      return res;
+    },
+
+    isValidVin(vin) {
+      if (!vin.match('^([0-9a-hj-npr-zA-HJ-NPR-Z]{10,17})+$')) {
+        return false;
+      }
+      const letters = [{ k: 'A', v: 1 }, { k: 'B', v: 2 }, { k: 'C', v: 3 },
+        { k: 'D', v: 4 }, { k: 'E', v: 5 }, { k: 'F', v: 6 }, { k: 'G', v: 7 },
+        { k: 'H', v: 8 }, { k: 'J', v: 1 }, { k: 'K', v: 2 }, { k: 'L', v: 3 },
+        { k: 'M', v: 4 }, { k: 'N', v: 5 }, { k: 'P', v: 7 }, { k: 'R', v: 9 },
+        { k: 'S', v: 2 }, { k: 'T', v: 3 }, { k: 'U', v: 4 }, { k: 'V', v: 5 },
+        { k: 'W', v: 6 }, { k: 'X', v: 7 }, { k: 'Y', v: 8 }, { k: 'Z', v: 9 }];
+      const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
+      const exclude = ['I', 'O', 'Q'];
+      let val = 0;
+      for (let idx = 0; idx < vin.length; idx += 1) {
+        const item = vin.charAt(idx).toUpperCase();
+        if (exclude.find(x => x === item)) {
+          return false;
+        }
+        const pos = (item.match('^[0-9]+$') != null) ? parseInt(item, 10) : letters.filter(letter => letter.k === item)[0].v;
+        val += (pos * weights[idx]);
+      }
+      const checksum = (val % 11);
+      return (vin.charAt(8) === (checksum < 10 ? checksum.toString() : 'X'));
+    },
+
+    isValidGrz(type) {
+      let res = true;
+      if (type.length < 8 || type.length > 9) {
+        res = false;
+      }
+      const letters = ['А', 'В', 'Е', 'К', 'М', 'Н', 'О', 'Р', 'С', 'Т', 'У', 'Х'];
+      const regNumber = /\d/;
+      for (let i = 0; i < type.length; i += 1) {
+        const item = type.charAt(i).toUpperCase();
+        if (i === 0 || i === 4 || i === 5) {
+          res = letters.filter(letter => letter === item);
+          if (!res.length) {
+            res = false;
+          }
+        }
+        if (i > 0 && i < 4 && i > 5 && i < 9) {
+          if (!item.match(regNumber)) {
+            res = false;
+          }
+        }
+        if (i > 5 && i < 9) {
+          if (!item.match(regNumber)) {
+            res = false;
+          }
+        }
+      }
+      return res;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -211,6 +208,7 @@
     font-family: $font-family-1;
 
   }
+
   .report-form__error {
     color: red;
     margin-left: 10px;
@@ -307,5 +305,5 @@
     }
   }
 
-  
+
 </style>

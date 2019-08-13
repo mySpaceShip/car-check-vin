@@ -42,42 +42,42 @@
 </template>
 
 <script>
-  import {mapActions, mapGetters, mapMutations} from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
-  export default {
-    name: 'ReportTable',
-    data() {
-      return {
-        colors: ['#F12B2C', '#F1A22B', ' #29CC97']
+export default {
+  name: 'ReportTable',
+  data() {
+    return {
+      colors: ['#F12B2C', '#F1A22B', ' #29CC97'],
+    };
+  },
+  filters: {
+    date(value) {
+      let res = '';
+      let data = '';
+      if (typeof value === 'object') {
+        data = value.toISOString();
+      } else {
+        data = value;
       }
+      const regData = /[-A-Z:.]/gi;
+      const arrData = data.split(regData);
+      res = `${arrData[0]}.${arrData[1]}.${arrData[2]} `
+            + `${arrData[3]}` + `:${arrData[4]}:${arrData[5]}`;
+      return res;
     },
-    filters: {
-      date: function (value) {
-        let res = ''
-        let data = ''
-        if (typeof value === 'object') {
-          data = value.toISOString()
-        } else {
-          data = value
-        }
-        let regData = /[-A-Z:.]/gi
-        let arrData = data.split(regData)
-        res = arrData[0] + '.' + arrData[1] + '.' + arrData[2] + ' '
-            + `${arrData[3]}` + ':' + arrData[4] + ':' + arrData[5]
-        return res
-      }
-    },
-    computed: {
-      ...mapGetters(['allReports'])
-    },
-    methods: {
-      ...mapActions(['getReports']),
-      ...mapMutations(['removeReport'])
-    },
-    async mounted() {
-      this.getReports()
-    }
-  }
+  },
+  computed: {
+    ...mapGetters(['allReports']),
+  },
+  methods: {
+    ...mapActions(['getReports']),
+    ...mapMutations(['removeReport']),
+  },
+  async mounted() {
+    this.getReports();
+  },
+};
 </script>
 
 <style lang="scss" scoped>

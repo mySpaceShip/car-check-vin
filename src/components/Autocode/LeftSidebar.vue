@@ -30,17 +30,16 @@
 </template>
 
 <script>
-  export default {
-    name: 'LeftSidebar',
-    methods: {
-      logOut() {
-        this.$store.commit('loginUser', false)
-        this.$router.push('/login')
+export default {
+  name: 'LeftSidebar',
+  methods: {
+    logOut() {
+      this.$store.commit('loginUser', false);
+      this.$router.push('/login');
+    },
+  },
 
-      }
-    }
-
-  }
+};
 </script>
 
 <style lang="scss" scoped>

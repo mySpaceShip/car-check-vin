@@ -6,12 +6,13 @@
 </template>
 
 <script>
-  import CreateReportForm from './CreateReportForm'
-  import ReportTable from './ReportTable'
-  export default {
-    name: 'ReportView',
-    components: {ReportTable, CreateReportForm}
-  }
+import CreateReportForm from './CreateReportForm.vue';
+import ReportTable from './ReportTable.vue';
+
+export default {
+  name: 'ReportView',
+  components: { ReportTable, CreateReportForm },
+};
 </script>
 
 <style lang="scss" scoped>
