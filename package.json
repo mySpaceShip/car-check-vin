@@ -20,7 +20,7 @@
     "autoprefixer": "^9.1.5",
     "axios": "^0.18.0",
     "form-backend-validation": "^2.3.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "portal-vue": "^1.4.0",
     "tailwindcss": "^0.6.4",
